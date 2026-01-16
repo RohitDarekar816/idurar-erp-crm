@@ -77,7 +77,7 @@ services:
     restart: unless-stopped
     environment:
       VITE_DEV_REMOTE: remote
-      VITE_BACKEND_SERVER: http://idurar-backend:8888
+      VITE_BACKEND_SERVER: http://54.39.99.223:8888
     expose:
       - "80"
     depends_on:
