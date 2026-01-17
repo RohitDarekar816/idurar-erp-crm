@@ -42,7 +42,7 @@ services:
       AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       APP_NAME: IDURAR ERP CRM
-      APP_URL: https://erp.afintrix.com
+      APP_URL: http://54.39.99.223:8888
       BACKEND_URL: http://54.39.99.223:8888
       RATE_LIMIT_WINDOW_MS: 900000
       RATE_LIMIT_MAX_REQUESTS: 100
