@@ -75,7 +75,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_DEV_REMOTE: remote
-        VITE_BACKEND_SERVER: http://idurar-backend:8888
+        VITE_BACKEND_SERVER: https://api.erp.afintrix.com
     container_name: idurar-frontend
     restart: unless-stopped
     environment:
