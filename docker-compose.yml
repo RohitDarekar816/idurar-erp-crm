@@ -48,8 +48,8 @@ services:
       RATE_LIMIT_MAX_REQUESTS: 100
       MAX_FILE_SIZE: 10485760
       ALLOWED_FILE_TYPES: image/jpeg,image/png,image/gif,application/pdf,text/plain
-    ports:
-      - "8888:8888"
+    expose:
+      - "8888"
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:
@@ -81,9 +81,9 @@ services:
     environment:
       VITE_DEV_REMOTE: remote
       VITE_BACKEND_SERVER: https://api.erp.afintrix.com
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "80"
+      - "443"
     depends_on:
       backend:
         condition: service_healthy
