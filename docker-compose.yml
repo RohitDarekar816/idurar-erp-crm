@@ -42,14 +42,14 @@ services:
       AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       APP_NAME: IDURAR ERP CRM
-      APP_URL: http://54.39.99.223:8888
-      BACKEND_URL: http://54.39.99.223:8888
+      APP_URL: https://erp.afintrix.com
+      BACKEND_URL: https://api.erp.afintrix.com
       RATE_LIMIT_WINDOW_MS: 900000
       RATE_LIMIT_MAX_REQUESTS: 100
       MAX_FILE_SIZE: 10485760
       ALLOWED_FILE_TYPES: image/jpeg,image/png,image/gif,application/pdf,text/plain
-    ports:
-      - "8888:8888"
+    expose:
+      - "8888"
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:
@@ -77,7 +77,7 @@ services:
     restart: unless-stopped
     environment:
       VITE_DEV_REMOTE: remote
-      VITE_BACKEND_SERVER: http://54.39.99.223:8888/
+      VITE_BACKEND_SERVER: https://api.erp.afintrix.com
     expose:
       - "80"
     depends_on:
