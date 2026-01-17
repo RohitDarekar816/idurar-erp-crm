@@ -14,7 +14,11 @@ RUN npm ci --only=production
 COPY . .
 
 # Build the application
-RUN npm run build
+ARG VITE_BACKEND_SERVER
+ARG VITE_DEV_REMOTE
+ENV VITE_BACKEND_SERVER=$VITE_BACKEND_SERVER
+ENV VITE_DEV_REMOTE=$VITE_DEV_REMOTE
+RUN npm run build -- --mode production
 
 # Production stage
 FROM nginx:alpine

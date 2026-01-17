@@ -24,6 +24,10 @@ if (process.env.DATABASE) {
     );
     console.error(`2. 🚫 Error → : ${error.message}`);
   });
+
+  mongoose.connection.on('connected', () => {
+    console.log('✅ Connected to MongoDB database');
+  });
 } else {
   console.log('⚠️  DATABASE URL not provided - running without database connection');
 }

@@ -31,7 +31,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 8888
-      MONGODB_URI: mongodb://admin:password123@mongodb:27017/idurar-erp-crm?authSource=admin
+      DATABASE: mongodb://admin:password123@mongodb:27017/idurar-erp-crm?authSource=admin
       JWT_SECRET: vXNgiNWomnzfHnijakyiMEHbTTaevIChPqX
       JWT_EXPIRES_IN: 7d
       RESEND_API_KEY: ${RESEND_API_KEY:-your-resend-api-key}
@@ -42,14 +42,14 @@ services:
       AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       APP_NAME: IDURAR ERP CRM
-      APP_URL: https://api.erp.afintrix.com
+      APP_URL: https://erp.afintrix.com
       BACKEND_URL: https://api.erp.afintrix.com
       RATE_LIMIT_WINDOW_MS: 900000
       RATE_LIMIT_MAX_REQUESTS: 100
       MAX_FILE_SIZE: 10485760
       ALLOWED_FILE_TYPES: image/jpeg,image/png,image/gif,application/pdf,text/plain
-    expose:
-      - "8888"
+    ports:
+      - "8888:8888"
     volumes:
       - uploads_data:/app/public/uploads
     depends_on:
@@ -73,13 +73,17 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_DEV_REMOTE: remote
+        VITE_BACKEND_SERVER: http://idurar-backend:8888
     container_name: idurar-frontend
     restart: unless-stopped
     environment:
       VITE_DEV_REMOTE: remote
       VITE_BACKEND_SERVER: https://api.erp.afintrix.com
-    expose:
-      - "80"
+    ports:
+      - "80:80"
+      - "443:443"
     depends_on:
       backend:
         condition: service_healthy
