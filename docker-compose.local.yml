@@ -1,0 +1,107 @@
+version: "3.8"
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: idurar-mongodb-local
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: idurar-erp-crm
+    volumes:
+      - mongodb_data_local:/data/db
+      - ./backend/setup/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - local
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: idurar-backend-local
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 8888
+      DATABASE: mongodb://admin:password123@mongodb:27017/idurar-erp-crm?authSource=admin
+      JWT_SECRET: local_dev_jwt_secret
+      JWT_EXPIRES_IN: 7d
+      RESEND_API_KEY: ${RESEND_API_KEY:-your-resend-api-key}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@localhost.com}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      APP_NAME: Afintrix ERP CRM
+      APP_URL: http://localhost:3000
+      BACKEND_URL: http://localhost:8888
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+      MAX_FILE_SIZE: 10485760
+      ALLOWED_FILE_TYPES: image/jpeg,image/png,image/gif,application/pdf,text/plain
+    ports:
+      - "8888:8888"
+    networks:
+      - local
+    volumes:
+      - uploads_data_local:/app/public/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('http').get('http://localhost:8888/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Frontend Application
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_DEV_REMOTE: remote
+        VITE_BACKEND_SERVER: http://localhost:8888
+    container_name: idurar-frontend-local
+    restart: unless-stopped
+    environment:
+      VITE_DEV_REMOTE: remote
+      VITE_BACKEND_SERVER: http://localhost:8888
+    ports:
+      - "3000:80"
+    networks:
+      - local
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data_local:
+  uploads_data_local:
+
+networks:
+  local:
+    driver: bridge
