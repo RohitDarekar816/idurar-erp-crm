@@ -31,6 +31,4 @@ export default function UpgradeButton() {
   );
 }
 
-console.log(
-  '🚀 Welcome to IDURAR ERP CRM! Did you know that we also offer commercial customization services? Contact us at hello@idurarapp.com for more information.'
-);
+console.log('🚀 Welcome to Afintrix ERP CRM!');
