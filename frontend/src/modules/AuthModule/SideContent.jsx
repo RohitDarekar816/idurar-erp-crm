@@ -23,9 +23,7 @@ export default function SideContent() {
         <img
           src={logo}
           alt="Afintrix ERP CRM"
-          style={{ margin: '0 0 40px', display: 'block' }}
-          height={63}
-          width={220}
+          style={{ margin: '0 0 40px', display: 'block', maxWidth: '100%', height: 'auto' }}
         />
 
         <Title level={1} style={{ fontSize: 28 }}>
